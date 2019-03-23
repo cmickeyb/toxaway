@@ -1,0 +1,32 @@
+<html>
+    <head>
+      {% if title %}
+      <link rel="stylesheet" type="text/css", href="/html/style.css">
+      <title>{{ title }}</title>
+      {% else %}
+      <title>Toxaway</title>
+      {% endif %}
+    </head>
+
+    <body>
+      <div style="background-image:url(/html/images/toxaway.jpg); background-repeat:no-repeat; bakbackground-position:top; min-height:468px;"></div>
+      <hr>
+      <div>
+        <br>
+        {% if profile %}
+        <b>Navigation</b>:
+        <a href="/flask/index.html">Home</a>
+        <br>
+        <b>Profile: {{ profile.name}}</b> |
+        <a href="/flask/login">Change Profile</a> |
+        <a href="/flask/logout">Drop Profile</a>
+        {% else %}
+        <b>Navigation</b>:
+        <a href="/flask/index.html">Home</a> |
+        <a href="/flask/login">Select Profile</a>
+        {% endif %}
+      </div>
+      <hr>
+      {% block content %}{% endblock %}
+    </body>
+</html>
