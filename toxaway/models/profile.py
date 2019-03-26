@@ -30,8 +30,8 @@ class Profile(object) :
     # -----------------------------------------------------------------
     @staticmethod
     def __profile_root_directory__(config) :
-        profile_config = config.get('Profile', {})
-        return os.path.realpath(profile_config.get('RootDirectory', os.path.join(os.environ['HOME'], '.toxaway')))
+        path_config = config.get('ContentPaths', {})
+        return os.path.realpath(path_config.get('Profile', os.path.join(os.environ['HOME'], '.toxaway')))
 
     # -----------------------------------------------------------------
     @staticmethod

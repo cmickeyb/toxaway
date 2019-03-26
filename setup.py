@@ -44,8 +44,9 @@ setup(
     include_package_data=True,
     data_files=data_files,
     install_requires=[
-        'flask',
-    ],
+                      'flask-wtf',
+                      'flask',
+                      ],
     entry_points = {
         'console_scripts' : [ 'toxaway-server = toxaway.scripts.server:Main' ]
     }

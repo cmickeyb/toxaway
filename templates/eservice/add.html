@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h1>Add Enclave Service</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+          {{ form.eservice_url.label }}<br>
+          {{ form.eservice_url(size=32) }}
+        </p>
+        <p>
+          {{ form.submit() }}
+        </p>
+    </form>
+</div>
+<div style='height:100%'></div>
+{% endblock %}
