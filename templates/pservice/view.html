@@ -18,8 +18,8 @@
         <td> {{ pservice.service_url }} </td>
       </tr>
       <tr>
-        <td  valign="top" width=20%><b>Identity</b></td>
-        <td> {{ pservice.service_key }} </td>
+        <td  valign="top" width=20%><b>Service Identity</b></td>
+        <td> {% autoescape false %} {{ pservice.service_key | replace('\n', '<br>') }} {% endautoescape %} </td>
       </tr>
       <tr>
         <td  valign="top" width=20%><b>File Name</b></td>

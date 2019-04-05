@@ -137,7 +137,7 @@ class EnclaveService(object) :
     def load(cls, config, eservice_file_name, use_raw=False) :
         """load an existing eservice from disk
         """
-        logger.info('load eservice %s', eservice_file_name)
+        logger.debug('load eservice %s', eservice_file_name)
         if not use_raw :
             eservice_file_name = EnclaveService.__file_name__(config, eservice_file_name)
         if not os.path.exists(eservice_file_name) :
@@ -146,7 +146,6 @@ class EnclaveService(object) :
         with open(eservice_file_name, "rb") as pf:
             serialized_eservice = pf.read()
 
-        logger.info('eservice loaded from file %s', eservice_file_name)
         eservice_object = cls(serialized_eservice)
         eservice_object.file_name = eservice_file_name
 
@@ -180,7 +179,7 @@ class EnclaveService(object) :
         with open(eservice_file, "wb") as pf:
             pf.write(serialized_eservice)
 
-        logger.info('eservice saved to %s', eservice_file)
+        logger.debug('eservice saved to %s', eservice_file)
 
     # -----------------------------------------------------------------
     def deserialize(self, serialized_eservice) :
