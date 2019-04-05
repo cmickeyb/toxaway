@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block navigation %}
+{% include "pservice/pservice.html" %}
+{% endblock %}
+
+{% block content %}
+<div>
+    {% if pservice.name %}
+    <h1>Provisioning Service {{ pservice.name }}</h1>
+    {% else %}
+    <h1>Provisioning Service Information</h1>
+    {% endif %}
+
+    <table>
+      <tr>
+        <td  valign="top" width=20%><b>Service URL</b></td>
+        <td> {{ pservice.service_url }} </td>
+      </tr>
+      <tr>
+        <td  valign="top" width=20%><b>Identity</b></td>
+        <td> {{ pservice.service_key }} </td>
+      </tr>
+      <tr>
+        <td  valign="top" width=20%><b>File Name</b></td>
+        <td> {{ pservice.file_name }} </td>
+      </tr>
+    </table>
+</div>
+<div style='height:100%'></div>
+{% endblock %}

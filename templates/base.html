@@ -15,11 +15,15 @@
         <br>
         {% if profile %}
         <b>Navigation</b>:
-        <a href="/flask/index.html">Home</a>
+        <a href="/flask/index.html">Home</a> |
+        <a href="/flask/eservice/pick">EService</a> |
+        <a href="/flask/pservice/pick">PService</a>
         <br>
-        <b>Profile: {{ profile.name}}</b> |
+        <b>Profile: {{ profile.name }}</b> |
         <a href="/flask/login">Change Profile</a> |
-        <a href="/flask/logout">Drop Profile</a>
+        <a href="/flask/logout">Drop Profile</a> |
+        <br>
+        {% block navigation %}{% endblock %}
         {% else %}
         <b>Navigation</b>:
         <a href="/flask/index.html">Home</a> |

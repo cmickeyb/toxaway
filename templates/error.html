@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block navigation %}
+{% endblock %}
+
+{% block content %}
+<div>
+<h1>Ooops</h1>
+
+An error occurred processing the previous request:
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flashes">
+      {% for message in messages %}
+        <div class="message_flash">{{ message }}</div>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+</div>
+<div style='height:100%'></div>
+{% endblock %}

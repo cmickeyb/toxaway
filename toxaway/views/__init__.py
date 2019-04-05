@@ -17,6 +17,7 @@ from flask import Flask
 import toxaway.views.index
 import toxaway.views.login
 import toxaway.views.eservice
+import toxaway.views.pservice
 
 def register(config) :
     try :
@@ -32,5 +33,6 @@ def register(config) :
     toxaway.views.index.register(app, config)
     toxaway.views.login.register(app, config)
     toxaway.views.eservice.register(app, config)
+    toxaway.views.pservice.register(app, config)
 
     return app

@@ -1,20 +1,28 @@
 {% extends "base.html" %}
 
+{% block navigation %}
+{% include "eservice/eservice.html" %}
+{% endblock %}
+
 {% block content %}
 <div>
+    {% if eservice.name %}
     <h1>Enclave Service {{ eservice.name }}</h1>
+    {% else %}
+    <h1>Enclave Service Information</h1>
+    {% endif %}
 
     <table>
       <tr>
-        <td width=20%><b>Enclave Service URL</b></td>
+        <td  valign="top" width=20%><b>Enclave Service URL</b></td>
         <td> {{ eservice.enclave_service_url }} </td>
       </tr>
       <tr>
-        <td width=20%><b>Storage Service URL</b></td>
+        <td  valign="top" width=20%><b>Storage Service URL</b></td>
         <td> {{ eservice.storage_service_url }} </td>
       </tr>
       <tr>
-        <td width=20%><b>Enclave Identity</b></td>
+        <td  valign="top" width=20%><b>Enclave Identity</b></td>
         <td> {{ eservice.enclave_id }} </td>
       </tr>
     </table>

@@ -62,12 +62,12 @@ class Profile(object) :
 
     # -----------------------------------------------------------------
     @classmethod
-    def create(cls, config, profile, password) :
+    def create(cls, config, profile_name, password) :
         """create a new profile and save it
         """
-        logger.info('create profile for %s', profile)
-        profile_object = cls()
-        profile_object.save(config, profile, password)
+        logger.info('create profile for %s', profile_name)
+        profile_object = cls(profile_name)
+        profile_object.save(config, password)
 
         return profile_object
 
@@ -90,18 +90,19 @@ class Profile(object) :
         serialized_profile = crypto.SKENC_DecryptMessage(skenc_key, encrypted_profile)
         serialized_profile = bytes(serialized_profile)
 
-        return cls(serialized_profile)
+        return cls(profile_name, serialized_profile)
 
     # -----------------------------------------------------------------
-    def __init__(self, serialized_profile = None) :
+    def __init__(self, name, serialized_profile = None) :
+        self.name = name
         if serialized_profile :
             self.deserialize(serialized_profile)
         else :
             self.keys = ServiceKeys.create_service_keys()
 
     # -----------------------------------------------------------------
-    def save(self, config, profile_name, password) :
-        """serialize the profile, encrypte it and write it to disk
+    def save(self, config, password) :
+        """serialize the profile, encrypt it and write it to disk
         """
         serialized_profile = self.serialize()
         skenc_key = Profile.__encryption_key__(password)
@@ -109,7 +110,7 @@ class Profile(object) :
         encrypted_profile = crypto.SKENC_EncryptMessage(skenc_key, serialized_profile)
         encrypted_profile = bytes(encrypted_profile)
 
-        profile_file = Profile.__profile_file_name__(config, profile_name)
+        profile_file = Profile.__profile_file_name__(config, self.name)
         profile_dir = os.path.dirname(profile_file)
         if not os.path.isdir(profile_dir) :
             os.makedirs(profile_dir)

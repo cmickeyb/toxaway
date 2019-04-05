@@ -45,31 +45,43 @@ class EnclaveServiceList(object) :
 
         return eservice_list
 
+    # -----------------------------------------------------------------
     def __init__(self, config) :
         self.config = config
-        self.__eservice_by_url__ = {}
-        self.__url_by_identity__ = {}
+        self.__by_url__ = {}
+        self.__by_identity__ = {}
 
+    # -----------------------------------------------------------------
     def __iter__(self) :
-        for url, eservice in self.__eservice_by_url__.items() :
+        for url, eservice in self.__by_url__.items() :
             yield eservice
 
+    # -----------------------------------------------------------------
     def urls(self) :
-        return self.__eservice_by_url__.keys()
+        return self.__by_url__.keys()
 
+    # -----------------------------------------------------------------
     def identities(self) :
-        return self.__url_by_identity__.keys()
+        return self.__by_identity__.keys()
 
+    # -----------------------------------------------------------------
     def get_by_url(self, enclave_url) :
-        return self.__eservice_by_url__[enclave_url]
+        return self.__by_url__[enclave_url]
 
+    # -----------------------------------------------------------------
     def get_by_enclave_id(self, enclave_id) :
-        enclave_url = self.__url_by_identity__[enclave_id]
-        return self.__eservice_by_url__[enclave_url]
+        enclave_url = self.__by_identity__[enclave_id]
+        return self.__by_url__[enclave_url]
 
+    # -----------------------------------------------------------------
     def add(self, eservice) :
-        self.__url_by_identity__[eservice.enclave_id] = eservice.enclave_service_url
-        self.__eservice_by_url__[eservice.enclave_service_url] = eservice
+        self.__by_identity__[eservice.enclave_id] = eservice.enclave_service_url
+        self.__by_url__[eservice.enclave_service_url] = eservice
+
+    # -----------------------------------------------------------------
+    @property
+    def count(self) :
+        return len(self.__by_url__)
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -99,10 +111,13 @@ class EnclaveService(object) :
         """create a new eservice from a URL and save it
         """
 
-        logger.info('create eservice for %s', eservice_url)
-        eservice_client = EnclaveServiceClient(eservice_url)
-        enclave_info = eservice_client.get_enclave_public_info()
-        logger.info('DATA: %s', enclave_info)
+        try :
+            logger.info('create eservice for %s', eservice_url)
+            eservice_client = EnclaveServiceClient(eservice_url)
+            enclave_info = eservice_client.get_enclave_public_info()
+        except :
+            logger.warn('failed to retrieve eservice information')
+            return None
 
         eservice_object = cls()
         eservice_object.enclave_service_url = eservice_url
