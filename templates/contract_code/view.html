@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block navigation %}
+{% include "contract_code/navigate.html" %}
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1>Contract Code</h1>
+    <table>
+      <tr>
+        <td  valign="top" width=20%><b>Class Name</b></td>
+        <td> {{ contract_code.name }} </td>
+      </tr>
+      <tr>
+        <td  valign="top" width=20%><b>Code Hash</b></td>
+        <td> {{ contract_code.code_hash }} </td>
+      </tr>
+    </table>
+</div>
+
+<br>
+
+<div style="margin:auto;padding:10px;height:30%;width:80%;overflow:scroll;border:solid 2px black;overflow-y:scroll;overflow-x:scroll;">
+<pre><code>{{ contract_code.code }}</code></pre>
+</div>
+
+<div style='height:100%'></div>
+
+{% endblock %}

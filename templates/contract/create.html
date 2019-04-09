@@ -1,29 +1,28 @@
 {% extends "base.html" %}
 
-{% block navigation %}
-{% include "pservice/navigate.html" %}
-{% endblock %}
-
 {% block content %}
 <div>
-    <h1>Pick Provisioning Service</h1>
+    <h1>Create Contract</h1>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         <p>
           <table>
-            {% for pservice in form.pservice_list %}
+            {% for eservice in form.eservice_list %}
             <tr>
-              <td> {{ pservice }} </td>
-              <td> {{ pservice.label }} </td>
+              <td> {{ eservice }} </td>
+              <td> {{ eservice.label }} </td>
             </tr>
             {% endfor %}
           </table>
+        </p>
+        <p>
+          {{ form.code_file.label }}<br>
+          {{ form.eservice_url(size=32) }}
         </p>
         <p>
           {{ form.submit() }}
         </p>
     </form>
 </div>
-
 <div style='height:100%'></div>
 {% endblock %}

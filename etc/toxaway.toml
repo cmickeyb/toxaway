@@ -32,6 +32,7 @@ Template = "${home}/templates"
 Profile = "${data}/__toxaway__/profile"
 EService = "${data}/__toxaway__/eservice"
 PService = "${data}/__toxaway__/pservice"
+ContractCode = "${data}/__toxaway__/contract_code"
 
 # --------------------------------------------------
 # --------------------------------------------------
