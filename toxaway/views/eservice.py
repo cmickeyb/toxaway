@@ -113,7 +113,32 @@ class add_eservice_app(object) :
 
 ## ----------------------------------------------------------------
 ## ----------------------------------------------------------------
+class view_eservice_app(object) :
+    def __init__(self, config) :
+        self.__name__ = type(self).__name__
+        self.config = config
+
+    def __call__(self, eservice_id, *args) :
+        logger.info('view eservice')
+
+        # any update to the data store must be in the context of an authorized profile
+        profile = Profile.load(self.config, session['profile_name'], session['profile_secret'])
+        if profile is None :
+            logger.info('missing required profile')
+            return redirect(url_for('login_app'))
+
+        eservice = EnclaveService.load(self.config, eservice_id, use_raw=False)
+        if eservice is None :
+            logger.info('no such eservice as <%s>', eservice_id)
+            flash('failed to find the eservice')
+            render_template('error.html', title='An Error Occurred', profile=profile)
+
+        return render_template('eservice/view.html', title='View EService', eservice=eservice, profile=profile)
+
+## ----------------------------------------------------------------
+## ----------------------------------------------------------------
 def register(app, config) :
     logging.info('register auth apps')
     app.add_url_rule('/eservice/pick', None, pick_eservice_app(config), methods=['GET', 'POST'])
     app.add_url_rule('/eservice/add', None, add_eservice_app(config), methods=['GET', 'POST'])
+    app.add_url_rule('/eservice/view/<eservice_id>', None, view_eservice_app(config), methods=['GET'])

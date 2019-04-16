@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block navigation %}
+{% include "contract/navigate.html" %}
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1>Add Contract Code</h1>
+    {% for field in form.errors %}
+      {% for error in form.errors[field] %}
+      <div class="alert alert-error">
+        <strong>An Error Occurred:</strong> {{error}}
+      </div>
+      {% endfor %}
+    {% endfor %}
+
+    <form action="" method="post" enctype="multipart/form-data" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+          {{ form.contract_name.label }}<br>
+          {{ form.contract_name(size=32) }}
+        </p>
+        <p>
+          {{ form.contract.label }}<br>
+          {{ form.contract(size=32) }}
+        </p>
+        <p>
+          {{ form.submit() }}
+        </p>
+    </form>
+</div>
+<div style='height:100%'></div>
+{% endblock %}

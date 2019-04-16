@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block navigation %}
+{% include "contract/navigate.html" %}
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1>Contract Object</h1>
+    <table>
+      <tr>
+        <td  valign="top" width=20%><b>Contract Object Name</b></td>
+        <td> {{ contract.name }} </td>
+      </tr>
+      <tr>
+        <td  valign="top" width=20%><b>Contract ID</b></td>
+        <td> {{ contract.contract_id }} </td>
+      </tr>
+      <tr>
+        <td  valign="top" width=20%><b>Creator ID</b></td>
+        <td> {% autoescape false %} {{ contract.creator_id | replace('\n', '<br>') }} {% endautoescape %} </td>
+      </tr>
+    </table>
+</div>
+
+<div>
+  <h1>State Information</h1>
+  <table>
+    <tr>
+      <td valign="top" width="20%"><b>State Hash</b></td>
+      <td> {{ contract.contract_state.get_state_hash(encoding='b64') }} </td>
+    </tr>
+    <tr>
+      <td valign="top" width="20%"><b>Block List</b></td>
+      <td>
+        {% for block_id in contract.contract_state.component_block_ids %}
+           {{ block_id }} <br>
+        {% endfor %}
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div>
+  <h1>Enclave Information</h1>
+  <table>
+    <tr>
+      <td><b>Enclave ID</b></td>
+      <td><b>State Encryption Key</b></td>
+    </tr>
+    {% for enclave_id, encrypted_key in contract.enclave_reference_map() %}
+    <tr>
+      <td valign="top" width="20%">
+        <a href="/flask/eservice/view/{{ enclave_id }}"> {{ enclave_id }}</a>
+      </td>
+      <td valign="top"> {% autoescape false %} {{ encrypted_key | replace('\n', '<br>') }} {% endautoescape %} </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+</div>
+
+<div>
+    <h1>Contract Code</h1>
+    <table>
+      <tr>
+        <td  valign="top" width=20%><b>Class Name</b></td>
+        <td> {{ contract.contract_code.name }} </td>
+      </tr>
+      <tr>
+        <td  valign="top" width=20%><b>Code Hash</b></td>
+        <td> {{ contract.contract_code.code_hash }} </td>
+      </tr>
+    </table>
+</div>
+
+<br>
+
+<div style="margin:auto;padding:10px;height:30%;width:80%;overflow:scroll;border:solid 2px black;overflow-y:scroll;overflow-x:scroll;">
+<pre><code>{{ contract.contract_code.code }}</code></pre>
+</div>
+
+<div style='height:100%'></div>
+
+{% endblock %}

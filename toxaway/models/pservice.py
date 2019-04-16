@@ -100,11 +100,12 @@ class ProvisioningService(object) :
 
     # -----------------------------------------------------------------
     @staticmethod
-    def __file_name__(config, file_name) :
+    def __file_name__(config, pservice_id) :
         """create the name of the file for storing the profile
         """
         root = ProvisioningService.__root_directory__(config)
-        return os.path.realpath(os.path.join(root, '{0}.json'.format(os.path.basename(file_name))))
+        pservice_id = pservice_id.replace('+','-').replace('/','_')
+        return os.path.realpath(os.path.join(root, '{0}.json'.format(os.path.basename(pservice_id))))
 
     # -----------------------------------------------------------------
     @classmethod

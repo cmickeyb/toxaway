@@ -103,6 +103,7 @@ class EnclaveService(object) :
         """create the name of the file for storing the profile
         """
         root = EnclaveService.__root_directory__(config)
+        eservice_id = eservice_id.replace('+','-').replace('/','_')
         return os.path.realpath(os.path.join(root, '{0}.json'.format(os.path.basename(eservice_id))))
 
     # -----------------------------------------------------------------
