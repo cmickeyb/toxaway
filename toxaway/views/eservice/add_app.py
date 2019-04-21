@@ -15,31 +15,31 @@
 from flask import redirect, render_template, session, url_for, flash
 
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileRequired
-from wtforms import RadioField, StringField, SubmitField
+from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, URL
 
 from toxaway.models.profile import Profile
-from toxaway.models.contract import ContractList, Contract, LedgerContract
+from toxaway.models.eservice import EnclaveService
 
 import logging
 logger = logging.getLogger(__name__)
 
 ## ----------------------------------------------------------------
 ## ----------------------------------------------------------------
-class __Pick_Contract_Form__(FlaskForm) :
-    contract_list = RadioField('Contract Name', choices=[])
+class __Add_Enclave_Service_Form__(FlaskForm) :
+    eservice_url = StringField('Service URL', validators=[URL(require_tld=False, message='must provide a URL')])
+    eservice_name = StringField('Service Name', validators=[DataRequired(message='must provide a short name')])
     submit = SubmitField('Submit')
 
 ## ----------------------------------------------------------------
 ## ----------------------------------------------------------------
-class contract_pick_app(object) :
+class add_eservice_app(object) :
     def __init__(self, config) :
         self.__name__ = type(self).__name__
         self.config = config
 
     def __call__(self, *args) :
-        logger.info('contract_pick_app')
+        logger.info('add eservice')
 
         # any update to the data store must be in the context of an authorized profile
         profile = Profile.load(self.config, session['profile_name'], session['profile_secret'])
@@ -47,31 +47,20 @@ class contract_pick_app(object) :
             logger.info('missing required profile')
             return redirect(url_for('login_app'))
 
-        contract_list = ContractList.load(self.config)
-        if contract_list.count == 0 :
-            return redirect(url_for('contract_import_app'))
-
-        form = __Pick_Contract_Form__()
-
-        choices = []
-        for contract in contract_list :
-            choices.append((contract.contract_id, contract.name))
-
-        form.contract_list.choices = choices
+        form = __Add_Enclave_Service_Form__()
 
         if form.validate_on_submit() :
-            contract_id = form.contract_list.data
-            logger.info("selected contract id is %s", contract_id)
-            contract = Contract.load(self.config, contract_id, use_raw=False)
-            if contract is None :
-                logger.info('no such contract')
-                flash('failed to find contract')
+            logger.info('add enclave submit')
+
+            logger.info('create enclave information')
+            eservice = EnclaveService.create(self.config, form.eservice_url.data, name=form.eservice_name.data)
+            if eservice is None :
+                logger.info('no eservice found')
+                flash('failed to find the eservice')
                 return render_template('error.html', title='An Error Occurred', profile=profile)
 
-            ledger_info = LedgerContract.load(self.config, contract_id)
+            return render_template('eservice/view.html', title='View Enclave Service', eservice=eservice, profile=profile)
 
-            logger.info('render view')
-            return render_template('contract/view.html', title='View Contract', contract=contract, ledger_info=ledger_info, profile=profile)
         else :
-            logger.info('ERRORS: %s', form.errors)
-            return render_template('contract/pick.html', title='Pick Contract', form=form, profile=profile)
+            logger.info('re-render; %s', form.errors)
+            return render_template('eservice/add.html', title='Add Enclave Service', form=form, profile=profile)

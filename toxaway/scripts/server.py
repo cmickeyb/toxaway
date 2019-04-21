@@ -88,7 +88,7 @@ def StartService(config) :
         logger.error('missing configuration for %s', str(ke))
         sys.exit(-1)
 
-    logger.info('service started on port %s', http_port)
+    logger.info('service started on host %s, port %s', http_host, http_port)
 
     thread_pool = ThreadPool(maxthreads=worker_threads)
     thread_pool.start()

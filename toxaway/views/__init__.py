@@ -15,7 +15,7 @@
 from flask import Flask
 
 import toxaway.views.contract
-import toxaway.views.contract_code
+import toxaway.views.code
 import toxaway.views.eservice
 import toxaway.views.index
 import toxaway.views.login
@@ -33,7 +33,7 @@ def register(config) :
     #app.secret_key = 'four score and seven years ago'
 
     toxaway.views.contract.register(app, config)
-    toxaway.views.contract_code.register(app, config)
+    toxaway.views.code.register(app, config)
     toxaway.views.eservice.register(app, config)
     toxaway.views.index.register(app, config)
     toxaway.views.login.register(app, config)

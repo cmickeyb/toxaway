@@ -21,6 +21,7 @@ import os
 from pdo.contract.state import ContractState as pdo_contract_state
 from pdo.contract.code import ContractCode as pdo_contract_code
 from pdo.contract.contract import Contract as pdo_contract
+from sawtooth.helpers import pdo_connect
 
 import logging
 logger = logging.getLogger(__name__)
@@ -196,3 +197,48 @@ class Contract(pdo_contract) :
             os.makedirs(code_path)
 
         self.save_to_file(code_file_name)
+
+# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+class LedgerContract(pdo_contract) :
+    """A class to store information about an enclave service
+    """
+
+    # -----------------------------------------------------------------
+    @classmethod
+    def load(cls, config, contract_id) :
+        """Compute a list of URLs for known contracts
+        """
+
+        ledger_config = config["Sawtooth"]
+        client = pdo_connect.PdoRegistryHelper(ledger_config['LedgerURL'])
+
+        try :
+            contract_info = client.get_contract_dict(contract_id)
+        except Exception as e :
+            logger.info('error getting state hash; %s', str(e))
+            raise Exception('failed to retrieve contract state hash; {}'.format(contract_id))
+        logger.info("contract_info: %s", contract_info)
+
+        try :
+            ccl_info = client.get_ccl_info_dict(contract_id)
+            current_state_hash = ccl_info['current_state']['state_hash']
+        except Exception as e :
+            logger.info('error getting state hash; %s', str(e))
+            raise Exception('failed to retrieve contract state hash; {}'.format(contract_id))
+        logger.info("ccl_info: %s", ccl_info)
+
+        try :
+            state_info = client.get_ccl_state_dict(contract_id, current_state_hash)
+        except Exception as e :
+            logger.info('error getting state; %s', str(e))
+            raise Exception('failed to retrieve contract state; {}', contract_id)
+        logger.info("state_info: %s", state_info)
+
+        return cls(contract_info, ccl_info, state_info)
+
+    # -----------------------------------------------------------------
+    def __init__(self, contract_info, ccl_info, state_info) :
+        self.contract_info = contract_info
+        self.ccl_info = ccl_info
+        self.state_info = state_info

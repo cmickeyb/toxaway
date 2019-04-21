@@ -12,10 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from toxaway.views.contract.create_app import contract_create_app
-from toxaway.views.contract.import_app import contract_import_app
-from toxaway.views.contract.pick_app import contract_pick_app
-from toxaway.views.contract.view_app import contract_view_app
+from toxaway.views.pservice.add_app import add_pservice_app
+from toxaway.views.pservice.pick_app import pick_pservice_app
+from toxaway.views.pservice.view_app import view_pservice_app
 
 import logging
 logger = logging.getLogger(__name__)
@@ -25,8 +24,7 @@ __all__ = [ 'register' ]
 ## ----------------------------------------------------------------
 ## ----------------------------------------------------------------
 def register(app, config) :
-    logging.info('register contract creation')
-    app.add_url_rule('/contract/create', None, contract_create_app(config), methods=['GET', 'POST'])
-    app.add_url_rule('/contract/pick', None, contract_pick_app(config), methods=['GET', 'POST'])
-    app.add_url_rule('/contract/import', None, contract_import_app(config), methods=['GET', 'POST'])
-    app.add_url_rule('/contract/view/<contract_id>', None, contract_view_app(config), methods=['GET'])
+    logging.info('register pservice apps')
+    app.add_url_rule('/pservice/pick', None, pick_pservice_app(config), methods=['GET', 'POST'])
+    app.add_url_rule('/pservice/add', None, add_pservice_app(config), methods=['GET', 'POST'])
+    app.add_url_rule('/pservice/view/<pservice_id>', None, view_pservice_app(config), methods=['GET'])

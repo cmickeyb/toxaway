@@ -20,58 +20,54 @@ from wtforms import RadioField, StringField, SubmitField
 from wtforms.validators import DataRequired, URL
 
 from toxaway.models.profile import Profile
-from toxaway.models.contract import ContractList, Contract, LedgerContract
+from toxaway.models.contract_code import ContractCode, ContractCodeList
 
 import logging
 logger = logging.getLogger(__name__)
 
 ## ----------------------------------------------------------------
 ## ----------------------------------------------------------------
-class __Pick_Contract_Form__(FlaskForm) :
-    contract_list = RadioField('Contract Name', choices=[])
+class __Pick_Contract_Code_Form__(FlaskForm) :
+    contract_code_list = RadioField('Contract Code Name', choices=[])
     submit = SubmitField('Submit')
 
 ## ----------------------------------------------------------------
 ## ----------------------------------------------------------------
-class contract_pick_app(object) :
+class pick_contract_code_app(object) :
     def __init__(self, config) :
         self.__name__ = type(self).__name__
         self.config = config
 
     def __call__(self, *args) :
-        logger.info('contract_pick_app')
-
         # any update to the data store must be in the context of an authorized profile
         profile = Profile.load(self.config, session['profile_name'], session['profile_secret'])
         if profile is None :
             logger.info('missing required profile')
             return redirect(url_for('login_app'))
 
-        contract_list = ContractList.load(self.config)
-        if contract_list.count == 0 :
-            return redirect(url_for('contract_import_app'))
+        code_list = ContractCodeList.load(self.config)
+        if code_list.count == 0 :
+            return redirect(url_for('add_contract_code_app'))
 
-        form = __Pick_Contract_Form__()
+        form = __Pick_Contract_Code_Form__()
 
         choices = []
-        for contract in contract_list :
-            choices.append((contract.contract_id, contract.name))
+        for ccode in code_list :
+            choices.append((ccode.code_hash, ccode.name))
 
-        form.contract_list.choices = choices
+        form.contract_code_list.choices = choices
 
         if form.validate_on_submit() :
-            contract_id = form.contract_list.data
-            logger.info("selected contract id is %s", contract_id)
-            contract = Contract.load(self.config, contract_id, use_raw=False)
-            if contract is None :
-                logger.info('no such contract')
-                flash('failed to find contract')
+            contract_code = ContractCode.load(self.config, form.contract_code_list.data, use_raw=False)
+            if contract_code is None :
+                logger.info('no such contract code')
+                flash('failed to find contract code')
                 return render_template('error.html', title='An Error Occurred', profile=profile)
 
-            ledger_info = LedgerContract.load(self.config, contract_id)
-
-            logger.info('render view')
-            return render_template('contract/view.html', title='View Contract', contract=contract, ledger_info=ledger_info, profile=profile)
+            return render_template('contract_code/view.html',
+                                   title='View Contract Code',
+                                   contract_code=contract_code,
+                                   profile=profile)
         else :
-            logger.info('ERRORS: %s', form.errors)
-            return render_template('contract/pick.html', title='Pick Contract', form=form, profile=profile)
+            logger.debug('ERRORS: %s', form.errors)
+            return render_template('contract_code/pick.html', title='Pick Contract Code', form=form, profile=profile)

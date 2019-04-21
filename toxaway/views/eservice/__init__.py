@@ -12,10 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from toxaway.views.contract.create_app import contract_create_app
-from toxaway.views.contract.import_app import contract_import_app
-from toxaway.views.contract.pick_app import contract_pick_app
-from toxaway.views.contract.view_app import contract_view_app
+from toxaway.views.eservice.add_app import add_eservice_app
+from toxaway.views.eservice.pick_app import pick_eservice_app
+from toxaway.views.eservice.view_app import view_eservice_app
 
 import logging
 logger = logging.getLogger(__name__)
@@ -25,8 +24,7 @@ __all__ = [ 'register' ]
 ## ----------------------------------------------------------------
 ## ----------------------------------------------------------------
 def register(app, config) :
-    logging.info('register contract creation')
-    app.add_url_rule('/contract/create', None, contract_create_app(config), methods=['GET', 'POST'])
-    app.add_url_rule('/contract/pick', None, contract_pick_app(config), methods=['GET', 'POST'])
-    app.add_url_rule('/contract/import', None, contract_import_app(config), methods=['GET', 'POST'])
-    app.add_url_rule('/contract/view/<contract_id>', None, contract_view_app(config), methods=['GET'])
+    logging.info('register auth apps')
+    app.add_url_rule('/eservice/pick', None, pick_eservice_app(config), methods=['GET', 'POST'])
+    app.add_url_rule('/eservice/add', None, add_eservice_app(config), methods=['GET', 'POST'])
+    app.add_url_rule('/eservice/view/<eservice_id>', None, view_eservice_app(config), methods=['GET'])
