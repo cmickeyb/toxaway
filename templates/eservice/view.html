@@ -14,16 +14,36 @@
 
     <table>
       <tr>
-        <td  valign="top" width=20%><b>Enclave Service URL</b></td>
+        <td valign="top" width="25%"><b>Enclave Service ID</b></td>
+        <td> {{ eservice.eservice_id }} </td>
+      </tr>
+      <tr>
+        <td valign="top" width="25%"><b>Enclave Service URL</b></td>
         <td> {{ eservice.enclave_service_url }} </td>
       </tr>
       <tr>
-        <td  valign="top" width=20%><b>Storage Service URL</b></td>
+        <td valign="top" width="25%"><b>Storage Service URL</b></td>
         <td> {{ eservice.storage_service_url }} </td>
       </tr>
       <tr>
-        <td  valign="top" width=20%><b>Enclave Identity</b></td>
+        <td valign="top" width="25%"><b>Enclave Identity</b></td>
         <td> {% autoescape false %} {{ eservice.enclave_id | replace('\n', '<br>') }} {% endautoescape %} </td>
+      </tr>
+      <tr>
+        <td valign="top" width="25%"><b>Enclave Owner</b></td>
+        <td> {{ eservice.enclave_owner_id }} </td>
+      </tr>
+      <tr>
+        <td valign="top" width="25%"><b>Registration Block</b></td>
+        <td> {{ eservice.registration_block_id }} </td>
+      </tr>
+      <tr>
+        <td valign="top" width="25%"><b>Registration Transaction</b></td>
+        <td> {% autoescape false %} {{ eservice.printable_txn_id | replace('\n', '<br>') }} {% endautoescape %} </td>
+      </tr>
+      <tr>
+        <td valign="top" width="25%"><b>Proof Data</b></td>
+        <td> {{ eservice.proof_data }} </td>
       </tr>
     </table>
 </div>

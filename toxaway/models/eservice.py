@@ -20,6 +20,7 @@ import os
 
 from pdo.common.keys import EnclaveKeys
 from pdo.service_client.enclave import EnclaveServiceClient
+from sawtooth.helpers import pdo_connect
 
 import logging
 logger = logging.getLogger(__name__)
@@ -116,9 +117,18 @@ class EnclaveService(object) :
             logger.info('create eservice for %s', eservice_url)
             eservice_client = EnclaveServiceClient(eservice_url)
             enclave_info = eservice_client.get_enclave_public_info()
+            enclave_id = enclave_info['enclave_id']
         except :
             logger.warn('failed to retrieve eservice information')
             return None
+
+        try :
+            ledger_config = config["Sawtooth"]
+            client = pdo_connect.PdoRegistryHelper(ledger_config['LedgerURL'])
+            enclave_ledger_info = client.get_enclave_dict(enclave_id)
+        except Exception as e :
+            logger.info('error getting enclave; %s', str(e))
+            raise Exception('failed to retrieve enclave; {}'.format(enclave_id))
 
         eservice_object = cls()
         eservice_object.enclave_service_url = eservice_url
@@ -126,6 +136,11 @@ class EnclaveService(object) :
         eservice_object.enclave_keys = EnclaveKeys(enclave_info['verifying_key'], enclave_info['encryption_key'])
         eservice_object.file_name = eservice_object.enclave_keys.hashed_identity
         eservice_object.name = name or eservice_url
+
+        eservice_object.enclave_owner_id = enclave_ledger_info['owner_id']
+        eservice_object.registration_block_id = enclave_ledger_info['last_registration_block_context']
+        eservice_object.registration_transaction_id = enclave_ledger_info['registration_transaction_id']
+        eservice_object.proof_data = enclave_ledger_info['proof_data']
 
         assert eservice_object.enclave_id == enclave_info['enclave_id']
 
@@ -163,8 +178,19 @@ class EnclaveService(object) :
 
     # -----------------------------------------------------------------
     @property
+    def eservice_id(self) :
+        return self.enclave_keys.hashed_identity
+
+    @property
     def enclave_id(self) :
         return self.enclave_keys.identity
+
+    @property
+    def printable_txn_id(self) :
+        result = []
+        for x in range(0, len(self.registration_transaction_id), 50) :
+            result.append(self.registration_transaction_id[x:x+50])
+        return "\n".join(result)
 
     # -----------------------------------------------------------------
     def save(self, config) :
@@ -193,20 +219,29 @@ class EnclaveService(object) :
 
         eservice_info = json.loads(serialized_eservice)
 
+        self.name = eservice_info['name']
         self.enclave_service_url = eservice_info['enclave_service_url']
         self.storage_service_url = eservice_info['storage_service_url']
         self.enclave_keys = EnclaveKeys(
             eservice_info['enclave_keys']['verifying_key'], eservice_info['enclave_keys']['encryption_key'])
-        self.name = eservice_info['name']
+
+        self.enclave_owner_id = eservice_info['enclave_owner_id']
+        self.registration_block_id = eservice_info['registration_block_id']
+        self.registration_transaction_id = eservice_info['registration_transaction_id']
+        self.proof_data = eservice_info['proof_data']
 
     # -----------------------------------------------------------------
     def serialize(self) :
         """serialize the eservice for writing to disk
         """
         serialized = dict()
+        serialized['name'] = self.name
         serialized['enclave_service_url'] = self.enclave_service_url
         serialized['storage_service_url'] = self.storage_service_url
         serialized['enclave_keys'] = self.enclave_keys.serialize()
-        serialized['name'] = self.name
+        serialized['enclave_owner_id'] = self.enclave_owner_id
+        serialized['registration_block_id'] = self.registration_block_id
+        serialized['registration_transaction_id'] = self.registration_transaction_id
+        serialized['proof_data'] = self.proof_data
 
         return json.dumps(serialized).encode('utf-8')

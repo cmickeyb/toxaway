@@ -37,6 +37,7 @@ class view_eservice_app(object) :
             return redirect(url_for('login_app'))
 
         eservice = EnclaveService.load(self.config, eservice_id, use_raw=False)
+
         if eservice is None :
             logger.info('no such eservice as <%s>', eservice_id)
             flash('failed to find the eservice')

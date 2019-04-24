@@ -59,7 +59,7 @@ class add_eservice_app(object) :
                 flash('failed to find the eservice')
                 return render_template('error.html', title='An Error Occurred', profile=profile)
 
-            return render_template('eservice/view.html', title='View Enclave Service', eservice=eservice, profile=profile)
+            return redirect(url_for('view_eservice_app', eservice_id=eservice.eservice_id))
 
         else :
             logger.info('re-render; %s', form.errors)

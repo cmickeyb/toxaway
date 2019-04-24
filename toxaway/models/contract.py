@@ -200,7 +200,7 @@ class Contract(pdo_contract) :
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-class LedgerContract(pdo_contract) :
+class LedgerContract(object) :
     """A class to store information about an enclave service
     """
 

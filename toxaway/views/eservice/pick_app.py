@@ -52,18 +52,12 @@ class pick_eservice_app(object) :
 
         choices = []
         for eservice in eservice_list :
-            choices.append((eservice.file_name, eservice.enclave_service_url))
+            choices.append((eservice.eservice_id, eservice.enclave_service_url))
 
         form.eservice_list.choices = choices
 
         if form.validate_on_submit() :
-            eservice = EnclaveService.load(self.config, form.eservice_list.data, use_raw=True)
-            if eservice is None :
-                logger.info('no such eservice as <%s>', form.eservice_list.data)
-                flash('failed to find the eservice')
-                render_template('error.html', title='An Error Occurred', profile=profile)
-
-            return render_template('eservice/view.html', title='View EService', eservice=eservice, profile=profile)
+            return redirect(url_for('view_eservice_app', eservice_id=form.eservice_list.data))
         else :
             logger.debug('ERRORS: %s', form.errors)
             return render_template('eservice/pick.html', title='Pick EService', form=form, profile=profile)
