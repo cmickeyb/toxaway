@@ -155,6 +155,7 @@ class ProvisioningService(object) :
 
     # -----------------------------------------------------------------
     def __init__(self, serialized_pservice = None) :
+        self.__pservice_client__ = None
         if serialized_pservice :
             self.deserialize(serialized_pservice)
         else :
@@ -167,6 +168,14 @@ class ProvisioningService(object) :
     @property
     def service_id(self) :
         return self.service_key
+
+    # -----------------------------------------------------------------
+    @property
+    def pservice_client(self) :
+        if self.__pservice_client__ is None :
+            self.__pservice_client__ = ProvisioningServiceClient(self.service_url)
+
+        return self.__pservice_client__
 
     # -----------------------------------------------------------------
     def save(self, config) :

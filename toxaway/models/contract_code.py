@@ -18,6 +18,8 @@ import hashlib
 import json
 import os
 
+from pdo.contract import ContractCode as pdo_contract_code
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -162,6 +164,10 @@ class ContractCode(object) :
             self.name = None
             self.code_hash = None
             self.data_file_name = None
+
+    # -----------------------------------------------------------------
+    def create_pdo_contract(self) :
+        return pdo_contract_code(self.code, self.name)
 
     # -----------------------------------------------------------------
     @property

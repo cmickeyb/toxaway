@@ -42,7 +42,7 @@ class add_eservice_app(object) :
         logger.info('add eservice')
 
         # any update to the data store must be in the context of an authorized profile
-        profile = Profile.load(self.config, session['profile_name'], session['profile_secret'])
+        profile = Profile.load(self.config, session.get('profile_name',''), session.get('profile_secret',''))
         if profile is None :
             logger.info('missing required profile')
             return redirect(url_for('login_app'))

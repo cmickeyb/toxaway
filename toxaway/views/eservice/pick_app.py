@@ -52,7 +52,7 @@ class pick_eservice_app(object) :
 
         choices = []
         for eservice in eservice_list :
-            choices.append((eservice.eservice_id, eservice.enclave_service_url))
+            choices.append((eservice.eservice_id, eservice.name))
 
         form.eservice_list.choices = choices
 

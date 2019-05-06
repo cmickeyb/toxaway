@@ -51,13 +51,13 @@ class contract_import_app(object) :
         form = __Import_Contract_Form__()
 
         if form.validate_on_submit() :
-            contract = Contract.create(self.config, form.contract.data, form.contract_name.data)
+            contract = Contract.import_contract(self.config, form.contract.data, form.contract_name.data)
             if contract is None :
                 logger.info('failed to upload pdo')
                 flash('failed to upload pdo file')
                 return render_template('error.html', title='An Error Occurred', profile=profile)
 
-            return render_template('contract/view.html', title='View Contract', contract=contract, profile=profile)
+            return redirect(url_for('contract_view_app', contract_id=contract.safe_contract_id))
 
         else :
             logger.info('re-render; %s', form.errors)

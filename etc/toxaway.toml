@@ -17,7 +17,7 @@
 # Identity is a string used to identify the service in log files
 Identity = "${identity}"
 HttpPort = 7301
-Host = "localhost"
+Host = "0.0.0.0"
 
 # Max number of threads for processing WSGI requests
 WorkerThreads = 8

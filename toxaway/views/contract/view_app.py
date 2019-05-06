@@ -29,6 +29,7 @@ class contract_view_app(object) :
 
     def __call__(self, contract_id, *args) :
         logger.info('contract_view_app')
+        logger.info("selected contract id is %s", contract_id)
 
         # any update to the data store must be in the context of an authorized profile
         profile = Profile.load(self.config, session['profile_name'], session['profile_secret'])
@@ -36,7 +37,6 @@ class contract_view_app(object) :
             logger.info('missing required profile')
             return redirect(url_for('login_app'))
 
-        logger.info("selected contract id is %s", contract_id)
         contract = Contract.load(self.config, contract_id, use_raw=False)
         if contract is None :
             logger.info('no such contract')

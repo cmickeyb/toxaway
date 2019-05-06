@@ -41,7 +41,7 @@ class EnclaveServiceList(object) :
 
         eservice_list = cls(config)
         for eservice_file in eservice_files :
-            eservice = EnclaveService.load(config, eservice_file, use_raw=True)
+            eservice = EnclaveService.load_from_file(config, eservice_file)
             eservice_list.add(eservice)
 
         return eservice_list
@@ -150,12 +150,11 @@ class EnclaveService(object) :
 
     # -----------------------------------------------------------------
     @classmethod
-    def load(cls, config, eservice_file_name, use_raw=False) :
+    def load_from_file(cls, config, eservice_file_name) :
         """load an existing eservice from disk
         """
-        logger.debug('load eservice %s', eservice_file_name)
-        if not use_raw :
-            eservice_file_name = EnclaveService.__file_name__(config, eservice_file_name)
+        logger.debug('load eservice from file %s', eservice_file_name)
+
         if not os.path.exists(eservice_file_name) :
             return None
 
@@ -168,7 +167,18 @@ class EnclaveService(object) :
         return eservice_object
 
     # -----------------------------------------------------------------
+    @classmethod
+    def load(cls, config, eservice_id) :
+        """load an existing eservice from disk
+        """
+        logger.debug('load eservice from identity %s', eservice_id)
+        eservice_file_name = EnclaveService.__file_name__(config, eservice_id)
+        return cls.load_from_file(config, eservice_file_name)
+
+    # -----------------------------------------------------------------
     def __init__(self, serialized_eservice = None) :
+        self.__eservice_client__ = None
+
         if serialized_eservice :
             self.deserialize(serialized_eservice)
         else :
@@ -181,16 +191,26 @@ class EnclaveService(object) :
     def eservice_id(self) :
         return self.enclave_keys.hashed_identity
 
+    # -----------------------------------------------------------------
     @property
     def enclave_id(self) :
         return self.enclave_keys.identity
 
+    # -----------------------------------------------------------------
     @property
     def printable_txn_id(self) :
         result = []
         for x in range(0, len(self.registration_transaction_id), 50) :
             result.append(self.registration_transaction_id[x:x+50])
         return "\n".join(result)
+
+    # -----------------------------------------------------------------
+    @property
+    def eservice_client(self) :
+        if self.__eservice_client__ is None :
+            self.__eservice_client__ = EnclaveServiceClient(self.enclave_service_url)
+
+        return self.__eservice_client__
 
     # -----------------------------------------------------------------
     def save(self, config) :

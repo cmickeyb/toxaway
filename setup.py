@@ -48,6 +48,9 @@ setup(
                       'flask',
                       ],
     entry_points = {
-        'console_scripts' : [ 'toxaway-server = toxaway.scripts.server:Main' ]
+        'console_scripts' : [
+                             'toxaway-server = toxaway.scripts.server:Main',
+                             'toxaway-load = toxaway.scripts.bulk:Main'
+                             ]
     }
 )

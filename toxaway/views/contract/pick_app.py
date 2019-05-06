@@ -55,23 +55,13 @@ class contract_pick_app(object) :
 
         choices = []
         for contract in contract_list :
-            choices.append((contract.contract_id, contract.name))
+            choices.append((contract.safe_contract_id, contract.name))
 
         form.contract_list.choices = choices
 
         if form.validate_on_submit() :
             contract_id = form.contract_list.data
-            logger.info("selected contract id is %s", contract_id)
-            contract = Contract.load(self.config, contract_id, use_raw=False)
-            if contract is None :
-                logger.info('no such contract')
-                flash('failed to find contract')
-                return render_template('error.html', title='An Error Occurred', profile=profile)
-
-            ledger_info = LedgerContract.load(self.config, contract_id)
-
-            logger.info('render view')
-            return render_template('contract/view.html', title='View Contract', contract=contract, ledger_info=ledger_info, profile=profile)
+            return redirect(url_for('contract_view_app', contract_id=contract_id))
         else :
             logger.info('ERRORS: %s', form.errors)
             return render_template('contract/pick.html', title='Pick Contract', form=form, profile=profile)

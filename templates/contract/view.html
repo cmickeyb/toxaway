@@ -45,6 +45,21 @@
   <h1>Enclave Information</h1>
   <table>
     <tr>
+      <td><b>Invocation Enclave</b></td>
+      <td>
+        <a href="/flask/eservice/view/{{ contract.safe_invoke_enclave }}">{{ contract.safe_invoke_enclave }}</a>
+      </td>
+    </tr>
+    <tr>
+      <td><b>Update Enclave</b></td>
+      <td>
+        <a href="/flask/eservice/view/{{ contract.safe_update_enclave }}">{{ contract.safe_update_enclave }}</a>
+      </td>
+    </tr>
+  </table>
+  <br>
+  <table>
+    <tr>
       <td><b>Enclave ID</b></td>
       <td><b>State Encryption Key</b></td>
     </tr>

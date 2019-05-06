@@ -1,24 +1,47 @@
 {% extends "base.html" %}
 
+{% block navigation %}
+{% include "contract/navigate.html" %}
+{% endblock %}
+
 {% block content %}
 <div>
     <h1>Create Contract</h1>
+    {% for field in form.errors %}
+      {% for error in form.errors[field] %}
+      <div class="alert alert-error">
+        <strong>An Error Occurred:</strong> {{error}}
+      </div>
+      {% endfor %}
+    {% endfor %}
+
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
+        <h2> {{ form.eservice_list.label }} </h2>
         <p>
-          <table>
-            {% for eservice in form.eservice_list %}
-            <tr>
-              <td> {{ eservice }} </td>
-              <td> {{ eservice.label }} </td>
-            </tr>
-            {% endfor %}
-          </table>
+          {{ form.eservice_list(rows=6, multiple=True) }}
         </p>
+
+        <h2> {{ form.pservice_list.label }} </h2>
         <p>
-          {{ form.code_file.label }}<br>
-          {{ form.eservice_url(size=32) }}
+          {{ form.pservice_list(rows=6, width=50, multiple=True) }}
         </p>
+
+        <h2> Contract Code </h2>
+        <table>
+          {% for code in form.contract_code_list %}
+          <tr>
+            <td> {{ code }} </td>
+            <td> {{ code.label }} </td>
+          </tr>
+          {% endfor %}
+        </table>
+
+        <h2> Contract Name </h2>
+        <p>
+          {{ form.contract_name(size=32) }}
+        </p>
+
         <p>
           {{ form.submit() }}
         </p>

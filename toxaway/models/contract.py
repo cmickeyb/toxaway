@@ -102,7 +102,7 @@ class Contract(pdo_contract) :
 
     # -----------------------------------------------------------------
     @classmethod
-    def create(cls, config, contract_file, contract_name) :
+    def import_contract(cls, config, contract_file, contract_name) :
         """create a new contract pdo object and save it
         """
 
@@ -147,6 +147,9 @@ class Contract(pdo_contract) :
 
         extra_data = contract_info.get('extra_data', {})
         extra_data['name'] = contract_name
+        extra_data['update-enclave'] = 'random'
+        extra_data['invoke-enclave'] = 'random'
+
         obj = cls(code, state, contract_info['contract_id'], contract_info['creator_id'], extra_data=extra_data)
         for enclave in contract_info['enclaves_info'] :
             obj.set_state_encryption_key(
@@ -175,7 +178,52 @@ class Contract(pdo_contract) :
     # -----------------------------------------------------------------
     def __init__(self, code, state, contract_id, creator_id, **kwargs) :
         pdo_contract.__init__(self, code, state, contract_id, creator_id, **kwargs)
-        self.name = self.extra_data.get('name', contract_id[:16])
+
+    # -----------------------------------------------------------------
+    @property
+    def safe_contract_id(self) :
+        return self.contract_id.replace('+','-').replace('/','_')
+
+    # -----------------------------------------------------------------
+    @property
+    def name(self) :
+        return self.extra_data.get('name', self.short_id)
+
+    @name.setter
+    def name(self, n) :
+        self.extra_data['name'] = n
+
+    # -----------------------------------------------------------------
+    @property
+    def invoke_enclave(self) :
+        return self.extra_data.get('invoke-enclave', 'random')
+
+    @property
+    def safe_invoke_enclave(self) :
+        return hashlib.sha256(self.invoke_enclave.encode('utf8')).hexdigest()[:16]
+
+    @invoke_enclave.setter
+    def invoke_enclave(self, e) :
+        logger.info('invoke list: %s', list(self.provisioned_enclaves))
+        if e not in list(self.provisioned_enclaves) + ['random'] :
+            raise ValueError('default invocation enclave not provisioned')
+        self.extra_data['invoke-enclave'] = e
+
+    # -----------------------------------------------------------------
+    @property
+    def update_enclave(self) :
+        return self.extra_data.get('update-enclave', 'random')
+
+    @property
+    def safe_update_enclave(self) :
+        return hashlib.sha256(self.update_enclave.encode('utf8')).hexdigest()[:16]
+
+    @update_enclave.setter
+    def update_enclave(self, e) :
+        logger.info('update list: %s', list(self.provisioned_enclaves))
+        if e not in list(self.provisioned_enclaves) + ['random'] :
+            raise ValueError('default invocation enclave not provisioned')
+        self.extra_data['update-enclave'] = e
 
     # -----------------------------------------------------------------
     def enclave_reference_map(self) :

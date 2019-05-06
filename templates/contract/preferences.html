@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block navigation %}
+{% include "contract/navigate.html" %}
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1>Update Contract Preferences</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+
+        <h2>Set Preferred Invocation Enclave</h2>
+        <p>
+          <table>
+            {% for enclave in form.invoke_list %}
+            <tr>
+              <td> {{ enclave }} </td>
+              <td> {{ enclave.label }} </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </p>
+
+        <h2>Set Preferred Update Enclave</h2>
+        <p>
+          <table>
+            {% for enclave in form.update_list %}
+            <tr>
+              <td> {{ enclave }} </td>
+              <td> {{ enclave.label }} </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </p>
+
+        <h2> Update Contract Name </h2>
+        <p>
+          {{ form.contract_name(size=32) }}
+        </p>
+
+        <p>
+          {{ form.submit() }}
+        </p>
+    </form>
+</div>
+
+<div style='height:100%'></div>
+{% endblock %}

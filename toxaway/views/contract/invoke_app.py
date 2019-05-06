@@ -15,20 +15,20 @@
 from flask import redirect, render_template, session, url_for, flash
 
 from toxaway.models.profile import Profile
-from toxaway.models.eservice import EnclaveService
+from toxaway.models.contract import Contract, LedgerContract
 
 import logging
 logger = logging.getLogger(__name__)
 
 ## ----------------------------------------------------------------
 ## ----------------------------------------------------------------
-class view_eservice_app(object) :
+class contract_invoke_app(object) :
     def __init__(self, config) :
         self.__name__ = type(self).__name__
         self.config = config
 
-    def __call__(self, eservice_id, *args) :
-        logger.info('view eservice')
+    def __call__(self, contract_id, *args) :
+        logger.info('contract_view_app')
 
         # any update to the data store must be in the context of an authorized profile
         profile = Profile.load(self.config, session['profile_name'], session['profile_secret'])
@@ -36,11 +36,12 @@ class view_eservice_app(object) :
             logger.info('missing required profile')
             return redirect(url_for('login_app'))
 
-        eservice = EnclaveService.load(self.config, eservice_id)
+        logger.info("selected contract id is %s", contract_id)
+        contract = Contract.load(self.config, contract_id, use_raw=False)
+        if contract is None :
+            logger.info('no such contract')
+            flash('failed to find contract')
+            return render_template('error.html', title='An Error Occurred', profile=profile)
 
-        if eservice is None :
-            logger.info('no such eservice as <%s>', eservice_id)
-            flash('failed to find the eservice')
-            render_template('error.html', title='An Error Occurred', profile=profile)
-
-        return render_template('eservice/view.html', title='View EService', eservice=eservice, profile=profile)
+        logger.info('render view')
+        return render_template('contract/view.html', title='View Contract', contract=contract, profile=profile)
