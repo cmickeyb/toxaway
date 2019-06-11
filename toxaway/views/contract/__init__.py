@@ -14,6 +14,7 @@
 
 from toxaway.views.contract.create_app import contract_create_app
 from toxaway.views.contract.import_app import contract_import_app
+from toxaway.views.contract.invoke_app import contract_invoke_app
 from toxaway.views.contract.pick_app import contract_pick_app
 from toxaway.views.contract.set_preferences_app import set_preferences_app
 from toxaway.views.contract.view_app import contract_view_app
@@ -31,5 +32,5 @@ def register(app, config) :
     app.add_url_rule('/contract/pick', None, contract_pick_app(config), methods=['GET', 'POST'])
     app.add_url_rule('/contract/import', None, contract_import_app(config), methods=['GET', 'POST'])
     app.add_url_rule('/contract/view/<contract_id>', None, contract_view_app(config), methods=['GET'])
-    # app.add_url_rule('/contract/invoke/<contract_id>', None, contract_invoke_app(config), methods=['GET'])
+    app.add_url_rule('/contract/invoke/<contract_id>', None, contract_invoke_app(config), methods=['GET', 'POST'])
     app.add_url_rule('/contract/preferences/<contract_id>', None, set_preferences_app(config), methods=['GET', 'POST'])

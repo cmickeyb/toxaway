@@ -6,7 +6,27 @@
 
 {% block content %}
 <div>
-    <h1>Contract Object</h1>
+  {% if error %}
+  <h1>Invocation Failed</h1>
+  <div> {{error}} </div>
+  {% endif %}
+
+  {% if result %}
+  <h1>Invocation Succeeded</h1>
+  <div> {{ str(result) }} </div>
+  {% endif %}
+
+  <h1>Invocation</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <h2> {{ form.expression.label }} </h2>
+        <p>
+          {{ form.expression }}
+        </p>
+        <p>
+          {{ form.submit() }}
+        </p>
+    </form>
 </div>
 
 <br>

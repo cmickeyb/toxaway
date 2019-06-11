@@ -14,11 +14,25 @@
 
 from flask import redirect, render_template, session, url_for, flash
 
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired, URL
+
 from toxaway.models.profile import Profile
-from toxaway.models.contract import Contract, LedgerContract
+from toxaway.models.contract import Contract
+from toxaway.models.eservice import EnclaveService
+from toxaway.models.response import ContractResponse, InvocationException
 
 import logging
 logger = logging.getLogger(__name__)
+
+__all__ = ['contract_invoke_app']
+
+## ----------------------------------------------------------------
+## ----------------------------------------------------------------
+class __Contract_Invoke_Form__(FlaskForm) :
+    expression = StringField('Expression')
+    submit = SubmitField('Submit')
 
 ## ----------------------------------------------------------------
 ## ----------------------------------------------------------------
@@ -43,5 +57,21 @@ class contract_invoke_app(object) :
             flash('failed to find contract')
             return render_template('error.html', title='An Error Occurred', profile=profile)
 
-        logger.info('render view')
-        return render_template('contract/view.html', title='View Contract', contract=contract, profile=profile)
+        form = __Contract_Invoke_Form__()
+
+        if form.validate_on_submit() :
+            try :
+                expression = form.expression.data
+                response = ContractResponse.invoke_method(self.config, profile, contract, expression)
+            except InvocationException as e :
+                logger.info('invocation failed: %s', str(e))
+                return render_template('contract/invoke.html', title='Invocation Results',
+                                       contract=contract, form=form, profile=profile, result=None, error=str(e))
+
+            logger.info('invoke: %s', form.invoke_list.data)
+            return render_template('contract/invoke.html', title='Invocation Results',
+                                   contract=contract, form=form, profile=profile, result=result, error=None)
+        else :
+            logger.info('re-render; %s', form.errors)
+            return render_template('contract/invoke.html', title='Invoke Contract Method',
+                                   contract=contract, form=form, profile=profile, result=None, error=None)

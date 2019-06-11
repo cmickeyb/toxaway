@@ -2,6 +2,7 @@
 <a href="/flask/contract/create">Create</a> |
 <a href="/flask/contract/import">Import</a> |
 {% if contract %}
+<a href="/flask/contract/invoke/{{ contract.safe_contract_id }}">Invoke</a> |
 <a href="/flask/contract/preferences/{{ contract.safe_contract_id }}">Preferences</a> |
 {% endif %}
 <a href="/flask/contract/pick">View</a>

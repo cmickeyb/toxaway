@@ -1,0 +1,67 @@
+[[EService]]
+url = "http://localhost:7101"
+name = "es7101"
+
+[[EService]]
+url = "http://localhost:7102"
+name = "es7102"
+
+[[EService]]
+url = "http://localhost:7103"
+name = "es7103"
+
+[[EService]]
+url = "http://localhost:7104"
+name = "es7104"
+
+[[EService]]
+url = "http://localhost:7105"
+name = "es7105"
+
+[[PService]]
+url = "http://localhost:7001"
+name = "ps7001"
+
+[[PService]]
+url = "http://localhost:7002"
+name = "ps7002"
+
+[[PService]]
+url = "http://localhost:7003"
+name = "ps7003"
+
+[[PService]]
+url = "http://localhost:7004"
+name = "ps7004"
+
+[[PService]]
+url = "http://localhost:7005"
+name = "ps7005"
+
+[[ContractCode]]
+file = "${home}/contracts/_asset_type.scm"
+contract = "asset-type-contract"
+
+[[ContractCode]]
+file = "${home}/contracts/_auction.scm"
+contract = "auction-contract"
+
+[[ContractCode]]
+file = "${home}/contracts/_exchange.scm"
+contract = "exchange-contract"
+
+[[ContractCode]]
+file = "${home}/contracts/_issuer.scm"
+contract = "issuer-contract"
+
+[[ContractCode]]
+file = "${home}/contracts/_mock-contract.scm"
+contract = "mock-contract"
+
+[[ContractCode]]
+file = "${home}/contracts/_vetting_organization.scm"
+contract = "vetting-organization-contract"
+
+# [[ContractCode]]
+# file = "${home}/contracts/_.scm"
+# contract = "-contract"
