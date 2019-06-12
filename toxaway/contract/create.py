@@ -92,8 +92,13 @@ def CreateContract(ledger_config, client_keys, enclaveclients, contract) :
 
     logger.info('Saving the initial contract state in the ledger...')
 
-    cclinit_result = initialize_response.submit_initialize_transaction(ledger_config, wait=60)
-    logger.info('contract initialized; %s', cclinit_result)
+    # submit the commit task: (a commit task replicates change-set and submits the corresponding transaction)
+    initialize_response.commit_asynchronously(ledger_config, wait_parameter_for_ledger=30, use_ledger=True)
+    txn_id = initialize_response.wait_for_commit()
+    if txn_id is None:
+        raise Exception("failed to commit transaction for the initial commit")
+
+    logger.info('contract initialized; transaction id %s', txn_id)
 
 ## -----------------------------------------------------------------
 ## -----------------------------------------------------------------
@@ -111,7 +116,6 @@ def Create(config, client_profile, contract_name, contract_code, eservices, pser
 
     client_keys = client_profile.keys
     provisioning_service_keys = list(pservices.identities())
-
 
     try :
         pdo_code_object = contract_code.create_pdo_contract()

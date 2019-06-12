@@ -25,6 +25,9 @@ WorkerThreads = 8
 # Suggested number of threads for processing other requests
 ReactorThreads = 8
 
+# Enclave service information
+EnclaveServiceDatabaseFile = "${home}/data/eservice-db.json"
+
 # --------------------------------------------------
 # --------------------------------------------------
 [ContentPaths]

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import atexit
 import os
 import sys
 import argparse
@@ -20,7 +21,8 @@ import pdo.common.config as pconfig
 import pdo.common.keys as keys
 import pdo.common.logger as plogger
 
-import pdo.eservice.pdo_helper as pdo_enclave_helper
+import pdo.service_client.service_data.eservice as eservice_db
+from pdo.contract.response import ContractResponse
 import toxaway.views
 
 import logging
@@ -79,6 +81,19 @@ class ShutdownResource(Resource) :
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
 def StartService(config) :
+    # load the eservice database
+    try :
+        dbfile_name = config['Service']['EnclaveServiceDatabaseFile']
+    except KeyError :
+        logger.error('missing required configuration for enclave service database')
+        sys.exit(-1)
+
+    try:
+        eservice_db.load_database(dbfile_name)
+    except Exception as e:
+        logger.error('error loading eservice database from file %s', str(e))
+        sys.exit(-1)
+
     try :
         http_port = config['Service']['HttpPort']
         http_host = config['Service']['Host']
@@ -124,6 +139,8 @@ def RunService() :
         yield reactor.callFromThread(reactor.stop)
 
     reactor.addSystemEventTrigger('before', 'shutdown', shutdown_twisted)
+
+    atexit.register(lambda : ContractResponse.exit_commit_workers())
 
     try :
         reactor.run()
