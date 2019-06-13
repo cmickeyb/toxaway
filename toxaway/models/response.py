@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import random
+
 from pdo.client.SchemeExpression import SchemeExpression
 from toxaway.models.eservice import EnclaveService
 
@@ -32,22 +34,35 @@ class ContractResponse(object) :
     ## ----------------------------------------------------------------
     @classmethod
     def invoke_method(cls, config, profile, contract, expression) :
-        eservice = EnclaveService.load(config, contract.update_enclave).eservice_client
-        update_request = contract.create_update_request(profile.keys, eservice, expression)
+        logger.info('load enclave service from %s', contract.update_enclave)
+        update_enclave = contract.update_enclave
+        if update_enclave == 'random' :
+            update_enclave = random.choice(contract.provisioned_enclaves)
+
+        eservice = EnclaveService.load(config, update_enclave).eservice_client
+        update_request = contract.create_update_request(profile.keys, expression, eservice)
         update_response = update_request.evaluate()
 
         if update_response.status is False :
             raise InvocationException(update_response.response)
 
         if update_response.state_changed :
-            logger.info('submit the transaction')
-            ledger_config = config['Sawtooth']
-            txnid = update_response.submit_update_transaction(ledger_config, wait=30)
-
             logger.info('update the contract state')
-            data_directory = config['Contract']['DataDirectory']
+            try :
+                data_directory = config['Contract']['DataDirectory']
+            except KeyError :
+                raise Exception('missing contract data configuration')
+
             contract.contract_state.save_to_cache(data_dir = data_directory)
             contract.set_state(update_response.raw_state)
+
+            logger.info('submit the transaction')
+            try :
+                ledger_config = config['Sawtooth']
+            except KeyError :
+                raise Exception('missing ledger configuration')
+
+            update_response.commit_asynchronously(ledger_config)
 
         # first try to parse the result as a Scheme expression, if that
         # fails, then just treat it as a string and return it; we know
