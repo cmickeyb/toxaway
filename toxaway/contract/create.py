@@ -93,7 +93,7 @@ def CreateContract(ledger_config, client_keys, enclaveclients, contract) :
     logger.info('Saving the initial contract state in the ledger...')
 
     # submit the commit task: (a commit task replicates change-set and submits the corresponding transaction)
-    initialize_response.commit_asynchronously(ledger_config, wait_parameter_for_ledger=30, use_ledger=True)
+    initialize_response.commit_asynchronously(ledger_config)
     txn_id = initialize_response.wait_for_commit()
     if txn_id is None:
         raise Exception("failed to commit transaction for the initial commit")
