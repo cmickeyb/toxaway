@@ -68,9 +68,9 @@ class contract_invoke_app(object) :
                 return render_template('contract/invoke.html', title='Invocation Results',
                                        contract=contract, form=form, profile=profile, result=None, error=str(e))
 
-            logger.info('invoke: %s', form.invoke_list.data)
+            logger.info("response is %s", str(response))
             return render_template('contract/invoke.html', title='Invocation Results',
-                                   contract=contract, form=form, profile=profile, result=result, error=None)
+                                   contract=contract, form=form, profile=profile, result=response.value, error=None)
         else :
             logger.info('re-render; %s', form.errors)
             return render_template('contract/invoke.html', title='Invoke Contract Method',

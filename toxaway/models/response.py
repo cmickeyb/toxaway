@@ -14,6 +14,7 @@
 
 import random
 
+import pdo.service_client.service_data.eservice as eservice_db
 from pdo.client.SchemeExpression import SchemeExpression
 from toxaway.models.eservice import EnclaveService
 
@@ -39,7 +40,8 @@ class ContractResponse(object) :
         if update_enclave == 'random' :
             update_enclave = random.choice(contract.provisioned_enclaves)
 
-        eservice = EnclaveService.load(config, update_enclave).eservice_client
+        eservice = eservice_db.get_client_by_id(update_enclave)
+        ## eservice = EnclaveService.load(config, update_enclave).eservice_client
         update_request = contract.create_update_request(profile.keys, expression, eservice)
         update_response = update_request.evaluate()
 
@@ -49,11 +51,12 @@ class ContractResponse(object) :
         if update_response.state_changed :
             logger.info('update the contract state')
             try :
-                data_directory = config['Contract']['DataDirectory']
+                contract_config = config['ContentPaths']
+                state_directory = contract_config['State']
             except KeyError :
                 raise Exception('missing contract data configuration')
 
-            contract.contract_state.save_to_cache(data_dir = data_directory)
+            contract.contract_state.save_to_cache(data_dir = state_directory)
             contract.set_state(update_response.raw_state)
 
             logger.info('submit the transaction')
